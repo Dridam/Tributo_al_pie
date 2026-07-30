@@ -30,7 +30,7 @@
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // 3. Icono personalizado con 'logo.png' (coincide exactamente en minúsculas)
+    // 3. Icono personalizado con 'logo.png'
     const customIcon = L.icon({
       iconUrl: 'logo.png',   // Nombre exacto del archivo subido a GitHub junto a index.html
       iconSize: [60, 40],    // Ancho y alto en píxeles
@@ -38,7 +38,7 @@
       popupAnchor: [0, -20]  // Posición de la ventana flotante respecto al icono
     });
 
-    // 4. Tus 10 ubicaciones exactas (sin nombres en la tarjeta)
+    // 4. Tus 10 ubicaciones exactas
     const ubicaciones = [
       {
         coords: [40.4168, -3.7038], // Madrid
@@ -87,7 +87,7 @@
       },
       {
         coords: [38.7231, -5.5444], // Castuera
-        foto: "URL_DE_TU_FOTO_10",
+        foto: "pies_castuera.jpg",  // <-- Foto asociada a Castuera
         videoUrl: "URL_DE_EMBED_YOUTUBE_10"
       }
     ];
