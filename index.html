@@ -50,13 +50,13 @@
 
     /* Contenedor para tamaño real/proporcional (Córdoba y Castuera) */
     .img-container.img-natural {
-      height: auto; /* Permite que la altura se adapte a la proporción real de la foto */
+      height: auto;
     }
 
     .img-container.img-natural img {
       width: 100%;
       height: auto;
-      object-fit: contain; /* Mantiene la imagen intacta sin recortar nada */
+      object-fit: contain;
     }
 
     /* Modificadores de encuadre específico para fotos con altura fija */
@@ -160,14 +160,14 @@
     // Configuración de las ubicaciones
     const ubicaciones = [
       { coords: [40.7126, -4.1738], fotos: ["pies_colmenar.jpg" + cacheBuster], esPequeño: true }, // San Rafael
-      { coords: [40.6327, -3.1609], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },     // Guadalajara (usa pies_tres.jpg)
-      { coords: [40.0471, -3.0504], fotos: ["pies_belinchon.jpg" + cacheBuster], esPequeño: true }, // Belinchón
-      { coords: [40.4168, -3.7038], fotos: ["pies_madrid.jpeg" + cacheBuster], esPequeño: false }, // Madrid
+      { coords: [40.6327, -3.1609], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },     // Guadalajara
+      { coords: [40.0471, -3.0504], fotos: ["pies_belinchon.jpeg" + cacheBuster], esPequeño: true }, // Belinchón (.jpeg)
+      { coords: [40.4168, -3.7038], fotos: ["pies_madrid.jpeg" + cacheBuster], esPequeño: false }, // Madrid (.jpeg)
       { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar
-      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-bottom" }, // Quart
+      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-bottom" }, // Quart (.jpeg)
       { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma
       { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpg" + cacheBuster], esPequeño: false, esNatural: true }, // Córdoba (Tamaño real)
-      { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-crop-top-eighth" }, // Granollers
+      { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-crop-top-eighth" }, // Granollers (.jpeg)
       { coords: [38.7231, -5.5444], fotos: ["pies_castuera.jpg" + cacheBuster], esPequeño: false, esNatural: true } // Castuera (Tamaño real)
     ];
 
