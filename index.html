@@ -28,11 +28,11 @@
       width: 100%;
     }
 
-    /* Contenedor de imagen individual con tamaño reservado previo */
+    /* Contenedor de imagen general */
     .img-container {
       width: 100%;
       max-width: 250px;
-      height: 200px; /* Reserva el espacio para evitar descuadres en Leaflet */
+      height: 200px;
       background-color: #f0f0f0;
       border-radius: 6px;
       overflow: hidden;
@@ -46,6 +46,15 @@
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    /* Modificadores de encuadre específico */
+    .img-container img.img-top {
+      object-position: top center; /* Muestra la parte superior (Castuera) */
+    }
+
+    .img-container img.img-bottom {
+      object-position: bottom center; /* Recorta la mitad superior (Quart) */
     }
 
     /* CARRUSEL PARA MÚLTIPLES FOTOS */
@@ -133,15 +142,17 @@
 
     const cacheBuster = '?v=' + new Date().getTime();
 
-    // Lista de ubicaciones activas con pies_cordoba.jpg agregada
+    // Configuración de las ubicaciones y sus clases de encuadre si aplica
     const ubicaciones = [
       { coords: [40.7126, -4.1738], fotos: ["pies_colmenar.jpg" + cacheBuster], esPequeño: true }, // San Rafael
       { coords: [40.6008, -3.7081], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },     // Tres Cantos
+      { coords: [40.0471, -3.0504], fotos: ["pies_belinchon.jpg" + cacheBuster], esPequeño: true }, // Belinchón
       { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar
-      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false },  // Quart
+      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-bottom" }, // Quart (recorta arriba)
       { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma
       { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpg" + cacheBuster], esPequeño: false }, // Córdoba
-      { coords: [38.7231, -5.5444], fotos: ["pies_castuera.jpg" + cacheBuster], esPequeño: false }  // Castuera
+      { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpeg" + cacheBuster], esPequeño: false }, // Granollers
+      { coords: [38.7231, -5.5444], fotos: ["pies_castuera.jpg" + cacheBuster], esPequeño: false, fitClass: "img-top" }   // Castuera (enfoca arriba)
     ];
 
     ubicaciones.forEach((punto, index) => {
@@ -158,7 +169,7 @@
         punto.fotos.forEach(foto => {
           popupHtml += `
             <div class="carousel-slide">
-              <img src="${foto}" alt="Foto" onload="actualizarPopup(this)">
+              <img src="${foto}" class="${punto.fitClass || ''}" alt="Foto" onload="actualizarPopup(this)">
             </div>
           `;
         });
@@ -172,7 +183,7 @@
       else if (punto.fotos && punto.fotos.length === 1) {
         popupHtml += `
           <div class="img-container">
-            <img src="${punto.fotos[0]}" alt="Foto" onload="actualizarPopup(this)">
+            <img src="${punto.fotos[0]}" class="${punto.fitClass || ''}" alt="Foto" onload="actualizarPopup(this)">
           </div>
         `;
       }
