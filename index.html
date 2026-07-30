@@ -10,14 +10,23 @@
     body { margin: 0; padding: 0; font-family: sans-serif; }
     #map { width: 100vw; height: 100vh; }
     
+    /* Ampliar el contenedor general del recuadro flotante (popup) */
+    .leaflet-popup-content-wrapper {
+      padding: 10px;
+    }
+    .leaflet-popup-content {
+      width: auto !important; /* Permite que el popup se adapte al contenido */
+      margin: 12px;
+    }
+
     /* Estilos estándar para marcadores con foto y vídeo */
     .popup-content { text-align: center; }
-    .popup-content img { width: 100%; max-width: 260px; border-radius: 6px; display: block; margin-bottom: 8px; }
-    .popup-content iframe { width: 100%; max-width: 260px; height: 145px; border: 0; display: block; }
+    .popup-content img { width: 100%; max-width: 320px; border-radius: 6px; display: block; margin-bottom: 8px; }
+    .popup-content iframe { width: 100%; max-width: 320px; height: 180px; border: 0; display: block; }
 
-    /* Estilo especial para la imagen grande sin vídeo (Castuera) */
+    /* Estilo ampliado para la imagen de Castuera */
     .popup-content img.img-grande {
-      max-width: 380px; /* Tamaño ampliado */
+      max-width: 500px; /* Tamaño más grande para Castuera */
       margin-bottom: 0;
     }
   </style>
@@ -38,12 +47,12 @@
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // 3. Icono personalizado con 'logo.png'
+    // 3. Icono personalizado con 'logo.png' (TAMAÑO AMPLIADO)
     const customIcon = L.icon({
-      iconUrl: 'logo.png',   // Nombre del archivo de icono
-      iconSize: [60, 40],    
-      iconAnchor: [30, 20],  
-      popupAnchor: [0, -20]  
+      iconUrl: 'logo.png',   
+      iconSize: [90, 60],    // Ampliado de 60x40 a 90x60 px
+      iconAnchor: [45, 30],  // La mitad del nuevo tamaño para mantener el centro
+      popupAnchor: [0, -30]  // Posición del popup ajustada al nuevo tamaño
     });
 
     // 4. Tus 10 ubicaciones
@@ -96,7 +105,7 @@
       {
         coords: [38.7231, -5.5444], // Castuera
         foto: "pies_castuera.jpg",
-        videoUrl: null // Sin vídeo
+        videoUrl: null 
       }
     ];
 
@@ -104,14 +113,13 @@
     ubicaciones.forEach(punto => {
       let popupHtml = '';
 
-      // Si no tiene vídeo (como Castuera), muestra solo la foto ampliada
       if (!punto.videoUrl) {
         popupHtml = `
           <div class="popup-content">
             <img src="${punto.foto}" class="img-grande" alt="Imagen">
           </div>
         `;
-      } else { // Para el resto que sí llevan foto + vídeo
+      } else {
         popupHtml = `
           <div class="popup-content">
             <img src="${punto.foto}" alt="Imagen">
