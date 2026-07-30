@@ -28,7 +28,7 @@
       width: 100%;
     }
 
-    /* Contenedor estandarizado (usado para Córdoba, Castuera, Madrid, etc.) */
+    /* Contenedor estándar recortado (250x200) */
     .img-container {
       width: 100%;
       max-width: 250px;
@@ -48,17 +48,28 @@
       display: block;
     }
 
-    /* Modificadores de encuadre específico */
+    /* Contenedor para tamaño real/proporcional (Córdoba y Castuera) */
+    .img-container.img-natural {
+      height: auto; /* Permite que la altura se adapte a la proporción real de la foto */
+    }
+
+    .img-container.img-natural img {
+      width: 100%;
+      height: auto;
+      object-fit: contain; /* Mantiene la imagen intacta sin recortar nada */
+    }
+
+    /* Modificadores de encuadre específico para fotos con altura fija */
     .img-container img.img-top {
-      object-position: top center; /* Ajuste superior */
+      object-position: top center;
     }
 
     .img-container img.img-bottom {
-      object-position: bottom center; /* Recorta la mitad superior (Quart) */
+      object-position: bottom center;
     }
 
     .img-container img.img-crop-top-eighth {
-      object-position: center 12.5%; /* Recorta 1/8 de la parte superior (Granollers) */
+      object-position: center 12.5%;
     }
 
     /* CARRUSEL PARA MÚLTIPLES FOTOS */
@@ -149,15 +160,15 @@
     // Configuración de las ubicaciones
     const ubicaciones = [
       { coords: [40.7126, -4.1738], fotos: ["pies_colmenar.jpg" + cacheBuster], esPequeño: true }, // San Rafael
-      { coords: [40.6008, -3.7081], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },     // Tres Cantos
+      { coords: [40.6327, -3.1609], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },     // Guadalajara (usa pies_tres.jpg)
       { coords: [40.0471, -3.0504], fotos: ["pies_belinchon.jpg" + cacheBuster], esPequeño: true }, // Belinchón
-      { coords: [40.4168, -3.7038], fotos: ["pies_madrid.jpeg" + cacheBuster], esPequeño: false }, // Madrid (.jpeg)
+      { coords: [40.4168, -3.7038], fotos: ["pies_madrid.jpeg" + cacheBuster], esPequeño: false }, // Madrid
       { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar
-      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-bottom" }, // Quart (recorta arriba)
+      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-bottom" }, // Quart
       { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma
-      { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpg" + cacheBuster], esPequeño: false }, // Córdoba
-      { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-crop-top-eighth" }, // Granollers (recorta 1/8 arriba)
-      { coords: [38.7231, -5.5444], fotos: ["pies_castuera.jpg" + cacheBuster], esPequeño: false, fitClass: "img-top" } // Castuera (misma dimensión fija)
+      { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpg" + cacheBuster], esPequeño: false, esNatural: true }, // Córdoba (Tamaño real)
+      { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-crop-top-eighth" }, // Granollers
+      { coords: [38.7231, -5.5444], fotos: ["pies_castuera.jpg" + cacheBuster], esPequeño: false, esNatural: true } // Castuera (Tamaño real)
     ];
 
     ubicaciones.forEach((punto, index) => {
@@ -186,8 +197,9 @@
         `;
       } 
       else if (punto.fotos && punto.fotos.length === 1) {
+        const containerClass = punto.esNatural ? "img-container img-natural" : "img-container";
         popupHtml += `
-          <div class="img-container">
+          <div class="${containerClass}">
             <img src="${punto.fotos[0]}" class="${punto.fitClass || ''}" alt="Foto" onload="actualizarPopup(this)">
           </div>
         `;
