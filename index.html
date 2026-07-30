@@ -27,6 +27,7 @@
     /* Estilo ampliado para la imagen de Castuera */
     .popup-content img.img-grande {
       max-width: 500px; /* Tamaño más grande para Castuera */
+      height: auto;
       margin-bottom: 0;
     }
   </style>
@@ -47,15 +48,15 @@
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // 3. Icono personalizado con 'logo.png' (TAMAÑO AMPLIADO)
+    // 3. Icono personalizado con 'logo.png'
     const customIcon = L.icon({
-      iconUrl: 'logo.png',   
-      iconSize: [90, 60],    // Ampliado de 60x40 a 90x60 px
-      iconAnchor: [45, 30],  // La mitad del nuevo tamaño para mantener el centro
-      popupAnchor: [0, -30]  // Posición del popup ajustada al nuevo tamaño
+      iconUrl: './logo.png',   
+      iconSize: [90, 60],    
+      iconAnchor: [45, 30],  
+      popupAnchor: [0, -30]  
     });
 
-    // 4. Tus 10 ubicaciones
+    // 4. Ubicaciones
     const ubicaciones = [
       {
         coords: [40.4168, -3.7038], // Madrid
@@ -104,7 +105,7 @@
       },
       {
         coords: [38.7231, -5.5444], // Castuera
-        foto: "pies_castuera.jpg",
+        foto: "./pies_castuera.jpg", // Asegura la ruta desde el directorio raíz
         videoUrl: null 
       }
     ];
@@ -116,13 +117,13 @@
       if (!punto.videoUrl) {
         popupHtml = `
           <div class="popup-content">
-            <img src="${punto.foto}" class="img-grande" alt="Imagen">
+            <img src="${punto.foto}" class="img-grande" alt="Imagen no encontrada">
           </div>
         `;
       } else {
         popupHtml = `
           <div class="popup-content">
-            <img src="${punto.foto}" alt="Imagen">
+            <img src="${punto.foto}" alt="Imagen no encontrada">
             <iframe src="${punto.videoUrl}" allowfullscreen></iframe>
           </div>
         `;
