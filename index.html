@@ -30,15 +30,15 @@
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // 3. Crear el icono personalizado con la imagen 'logo.png'
+    // 3. Icono personalizado con 'logo.png' (coincide exactamente en minúsculas)
     const customIcon = L.icon({
-      iconUrl: 'logo.png',   // Nombre de la imagen subida a GitHub junto a index.html
-      iconSize: [60, 40],     // Tamaños en píxeles (ancho, alto)
-      iconAnchor: [30, 20],   // Punto de anclaje de la imagen (centro)
-      popupAnchor: [0, -20]   // Posición del popup respecto a la imagen
+      iconUrl: 'logo.png',   // Nombre exacto del archivo subido a GitHub junto a index.html
+      iconSize: [60, 40],    // Ancho y alto en píxeles
+      iconAnchor: [30, 20],  // Punto de anclaje (centro del icono)
+      popupAnchor: [0, -20]  // Posición de la ventana flotante respecto al icono
     });
 
-    // 4. Tus 10 ubicaciones reales
+    // 4. Tus 10 ubicaciones exactas (sin nombres en la tarjeta)
     const ubicaciones = [
       {
         coords: [40.4168, -3.7038], // Madrid
@@ -92,7 +92,7 @@
       }
     ];
 
-    // 5. Dibujar los marcadores usando el icono personalizado con logo.png
+    // 5. Dibujar marcadores con el logo personalizado
     ubicaciones.forEach(punto => {
       const popupHtml = `
         <div class="popup-content">
