@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Interactivo de España</title>
+  <!-- CSS de Leaflet (Estilos del mapa) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { margin: 0; padding: 0; font-family: sans-serif; }
+    #map { width: 100vw; height: 100vh; }
+    /* Ajuste para que las fotos y vídeos dentro del popup no se salgan */
+    .popup-content img { width: 100%; max-width: 250px; border-radius: 6px; margin-top: 5px; }
+    .popup-content iframe { width: 100%; max-width: 250px; height: 140px; border: 0; margin-top: 5px; }
+    .popup-content h3 { margin: 0 0 5px 0; color: #333; }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <!-- JS de Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // 1. Centrar el mapa en la Península y Baleares
+    const map = L.map('map').setView([39.8, -3.5], 6);
+
+    // 2. Capa de mapa básica (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // 3. Datos de las 10 ciudades (Península + Baleares)
+    const ciudades = [
+      {
+        nombre: "Madrid",
+        coords: [40.4167, -3.7037],
+        foto: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Barcelona",
+        coords: [41.3851, 2.1734],
+        foto: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Sevilla",
+        coords: [37.3891, -5.9845],
+        foto: "https://images.unsplash.com/photo-1559564484-e48b3e040ff4?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Valencia",
+        coords: [39.4699, -0.3763],
+        foto: "https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Bilbao",
+        coords: [43.2630, -2.9350],
+        foto: "https://images.unsplash.com/photo-1564221710303-125028442a84?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Santiago de Compostela",
+        coords: [42.8782, -8.5448],
+        foto: "https://images.unsplash.com/photo-1568283096533-0dd834839818?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Zaragoza",
+        coords: [41.6488, -0.8891],
+        foto: "https://images.unsplash.com/photo-1600858620247-495201083e95?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Granada",
+        coords: [37.1773, -3.5986],
+        foto: "https://images.unsplash.com/photo-1561632669-6e0e3cb9352e?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Palma de Mallorca (Baleares)",
+        coords: [39.5696, 2.6502],
+        foto: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      },
+      {
+        nombre: "Ibiza (Baleares)",
+        coords: [38.9067, 1.4206],
+        foto: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?w=400",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      }
+    ];
+
+    // 4. Agregar marcadores dinámicamente al mapa
+    ciudades.forEach(ciudad => {
+      const popupHtml = `
+        <div class="popup-content">
+          <h3>${ciudad.nombre}</h3>
+          <img src="${ciudad.foto}" alt="${ciudad.nombre}">
+          <iframe src="${ciudad.videoUrl}" allowfullscreen></iframe>
+        </div>
+      `;
+      L.marker(ciudad.coords).addTo(map).bindPopup(popupHtml);
+    });
+  </script>
+</body>
+</html>
