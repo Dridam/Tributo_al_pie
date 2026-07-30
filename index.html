@@ -2,25 +2,23 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mapa Interactivo</title>
-  <!-- CSS de Leaflet -->
+  
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
   <style>
-    body { margin: 0; padding: 0; font-family: sans-serif; }
-    #map { width: 100vw; height: 100vh; }
+    html, body { 
+      margin: 0; padding: 0; width: 100%; height: 100%; 
+      overflow: hidden; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    }
     
-    /* Ajuste del contenedor principal del popup */
-    .leaflet-popup-content-wrapper {
-      padding: 10px;
-    }
-    .leaflet-popup-content {
-      width: auto !important;
-      margin: 10px;
-      min-width: 200px; /* Asegura un ancho mínimo para evitar colapsos */
-    }
+    #map { width: 100vw; height: 100vh; touch-action: pan-x pan-y; }
+    
+    .leaflet-popup-content-wrapper { padding: 8px; border-radius: 8px; }
+    .leaflet-popup-content { width: auto !important; margin: 8px; max-width: 80vw !important; }
 
-    /* Estilos base para el contenido flotante */
     .popup-content { 
       text-align: center;
       display: flex;
@@ -28,105 +26,164 @@
       align-items: center;
     }
 
-    /* Imágenes con vídeo */
-    .popup-content img { 
-      width: 100%; 
-      max-width: 320px; 
-      height: auto;
-      border-radius: 6px; 
-      display: block; 
-      margin-bottom: 8px; 
-    }
-
-    .popup-content iframe { 
-      width: 100%; 
-      max-width: 320px; 
-      height: 180px; 
-      border: 0; 
-      display: block; 
-    }
-
-    /* Estilo para marcadores SOLO FOTO (Castuera y Alcázar de San Juan) */
+    /* Imagen individual */
     .popup-content img.img-grande {
       width: 100%;
-      max-width: 500px; /* Tamaño amplio de la primera versión */
-      min-height: 150px; /* Evita que el contenedor colapse a 0px antes de renderizar */
+      max-width: 280px;
+      max-height: 55vh;
+      min-height: 120px;
       height: auto;
-      margin-bottom: 0;
       object-fit: contain;
+      display: block;
+      border-radius: 6px;
     }
+
+    /* CARRUSEL PARA MÚLTIPLES FOTOS */
+    .carousel-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 280px;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .carousel-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; 
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    .carousel-slide {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      max-width: 280px;
+      max-height: 55vh;
+      min-height: 120px;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      font-size: 16px;
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 50%;
+      z-index: 10;
+      user-select: none;
+    }
+    .carousel-btn.prev { left: 4px; }
+    .carousel-btn.next { right: 4px; }
   </style>
 </head>
 <body>
 
   <div id="map"></div>
 
-  <!-- JS de Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map').setView([39.8, -3.0], 6);
+    const map = L.map('map', { tap: true }).setView([39.8, -3.0], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    const customIcon = L.icon({
+    // Icono Estándar (Resto de ubicaciones)
+    const defaultIcon = L.icon({
       iconUrl: 'logo.png',   
-      iconSize: [90, 60],    
-      iconAnchor: [45, 30],  
-      popupAnchor: [0, -30]  
+      iconSize: [60, 40],    
+      iconAnchor: [30, 20],  
+      popupAnchor: [0, -20]  
+    });
+
+    // Icono Pequeño (Madrid, Rivas, Colmenar Viejo y Tres Cantos)
+    const smallIcon = L.icon({
+      iconUrl: 'logo.png',   
+      iconSize: [45, 30],    
+      iconAnchor: [22, 15],  
+      popupAnchor: [0, -15]  
     });
 
     const cacheBuster = '?v=' + new Date().getTime();
 
     const ubicaciones = [
-      { coords: [40.4168, -3.7038], foto: "URL_DE_TU_FOTO_1", videoUrl: "URL_DE_EMBED_YOUTUBE_1" },
-      { coords: [40.3528, -3.5350], foto: "URL_DE_TU_FOTO_2", videoUrl: "URL_DE_EMBED_YOUTUBE_2" },
-      {
-        coords: [39.3892, -3.2081], // Alcázar de San Juan
-        foto: "pies_alcazar.jpg" + cacheBuster,
-        videoUrl: null 
-      },
-      { coords: [39.4831, -0.4431], foto: "URL_DE_TU_FOTO_4", videoUrl: "URL_DE_EMBED_YOUTUBE_4" },
-      { coords: [40.6008, -3.7081], foto: "URL_DE_TU_FOTO_5", videoUrl: "URL_DE_EMBED_YOUTUBE_5" },
-      { coords: [39.5696, 2.6502], foto: "URL_DE_TU_FOTO_6", videoUrl: "URL_DE_EMBED_YOUTUBE_6" },
-      { coords: [37.8882, -4.7794], foto: "URL_DE_TU_FOTO_7", videoUrl: "URL_DE_EMBED_YOUTUBE_7" },
-      { coords: [41.6079, 2.2876], foto: "URL_DE_TU_FOTO_8", videoUrl: "URL_DE_EMBED_YOUTUBE_8" },
-      { coords: [40.6586, -3.7663], foto: "URL_DE_TU_FOTO_9", videoUrl: "URL_DE_EMBED_YOUTUBE_9" },
-      {
-        coords: [38.7231, -5.5444], // Castuera
-        foto: "pies_castuera.jpg" + cacheBuster,
-        videoUrl: null 
-      }
+      { coords: [40.4168, -3.7038], fotos: ["pies_madrid.jpg" + cacheBuster], esPequeño: true }, // Madrid
+      { coords: [40.3528, -3.5350], fotos: ["pies_rivas.jpg" + cacheBuster], esPequeño: true },  // Rivas-Vaciamadrid
+      { coords: [40.6586, -3.7663], fotos: ["pies_colmenar.jpg" + cacheBuster], esPequeño: true }, // Colmenar Viejo
+      { coords: [40.6008, -3.7081], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },   // Tres Cantos
+      { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar de San Juan
+      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false }, // Quart de Poblet (.jpeg)
+      { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma de Mallorca
+      { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpg" + cacheBuster], esPequeño: false }, // Córdoba
+      { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpg" + cacheBuster], esPequeño: false }, // Granollers
+      { coords: [38.7231, -5.5444], fotos: ["pies_castuera.jpg" + cacheBuster], esPequeño: false }  // Castuera
     ];
 
-    ubicaciones.forEach(punto => {
-      let popupHtml = '';
+    ubicaciones.forEach((punto, index) => {
+      let popupHtml = '<div class="popup-content">';
 
-      if (!punto.videoUrl) {
-        popupHtml = `
-          <div class="popup-content">
-            <img src="${punto.foto}" class="img-grande" alt="Cargando imagen..." onload="actualizarPopup(this)">
+      // Si el punto tiene más de 1 foto, genera el carrusel
+      if (punto.fotos && punto.fotos.length > 1) {
+        const carouselId = `carousel-${index}`;
+        popupHtml += `
+          <div class="carousel-wrapper">
+            <button class="carousel-btn prev" onclick="moverCarrusel('${carouselId}', -1)">&#10094;</button>
+            <div class="carousel-track" id="${carouselId}">
+        `;
+        
+        punto.fotos.forEach(foto => {
+          popupHtml += `
+            <div class="carousel-slide">
+              <img src="${foto}" alt="Foto" onload="actualizarPopup(this)">
+            </div>
+          `;
+        });
+
+        popupHtml += `
+            </div>
+            <button class="carousel-btn next" onclick="moverCarrusel('${carouselId}', 1)">&#10095;</button>
           </div>
         `;
-      } else {
-        popupHtml = `
-          <div class="popup-content">
-            <img src="${punto.foto}" alt="Imagen" onload="actualizarPopup(this)">
-            <iframe src="${punto.videoUrl}" allowfullscreen></iframe>
-          </div>
-        `;
+      } 
+      // Si solo tiene 1 foto
+      else if (punto.fotos && punto.fotos.length === 1) {
+        popupHtml += `<img src="${punto.fotos[0]}" class="img-grande" alt="Foto" onload="actualizarPopup(this)">`;
       }
 
-      L.marker(punto.coords, { icon: customIcon }).addTo(map).bindPopup(popupHtml);
+      popupHtml += '</div>';
+
+      const iconoUsar = punto.esPequeño ? smallIcon : defaultIcon;
+
+      L.marker(punto.coords, { icon: iconoUsar })
+       .addTo(map)
+       .bindPopup(popupHtml, { autoPanPadding: [20, 20] });
     });
 
-    // Función global para forzar al popup a recalcular sus dimensiones en cuanto la imagen termina de cargarse
+    function moverCarrusel(carouselId, direccion) {
+      const track = document.getElementById(carouselId);
+      if (track) {
+        const slideWidth = track.clientWidth;
+        track.scrollBy({ left: slideWidth * direccion, behavior: 'smooth' });
+      }
+    }
+
     function actualizarPopup(imgElement) {
-      const popup = imgElement.closest('.leaflet-popup');
-      if (popup && map) {
-        // Redibuja el popup para adaptar el tamaño exacto de la imagen cargada
+      if (map) {
         map.eachLayer(layer => {
           if (layer.getPopup && layer.getPopup() && layer.isPopupOpen()) {
             layer.getPopup().update();
