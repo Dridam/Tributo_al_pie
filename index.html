@@ -10,23 +10,18 @@
     body { margin: 0; padding: 0; font-family: sans-serif; }
     #map { width: 100vw; height: 100vh; }
     
-    /* Ampliar el contenedor general del recuadro flotante (popup) */
-    .leaflet-popup-content-wrapper {
-      padding: 10px;
-    }
-    .leaflet-popup-content {
-      width: auto !important; /* Permite que el popup se adapte al contenido */
-      margin: 12px;
-    }
+    /* Contenedor flotante amplio */
+    .leaflet-popup-content-wrapper { padding: 10px; }
+    .leaflet-popup-content { width: auto !important; margin: 12px; }
 
     /* Estilos estándar para marcadores con foto y vídeo */
     .popup-content { text-align: center; }
     .popup-content img { width: 100%; max-width: 320px; border-radius: 6px; display: block; margin-bottom: 8px; }
     .popup-content iframe { width: 100%; max-width: 320px; height: 180px; border: 0; display: block; }
 
-    /* Estilo ampliado para la imagen de Castuera */
+    /* Estilo ampliado solo para la foto de Castuera */
     .popup-content img.img-grande {
-      max-width: 500px; /* Tamaño más grande para Castuera */
+      max-width: 500px;
       height: auto;
       margin-bottom: 0;
     }
@@ -39,91 +34,55 @@
   <!-- JS de Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // 1. Centrar el mapa en la Península e Islas Baleares
     const map = L.map('map').setView([39.8, -3.0], 6);
 
-    // 2. Capa base de mapa (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // 3. Icono personalizado con 'logo.png'
+    // Icono personalizado con tu logo
     const customIcon = L.icon({
-      iconUrl: './logo.png',   
+      iconUrl: 'logo.png',   
       iconSize: [90, 60],    
       iconAnchor: [45, 30],  
       popupAnchor: [0, -30]  
     });
 
-    // 4. Ubicaciones
+    // Detecta el nombre del repositorio automáticamente si no es la raíz de Dridam
+    const repo = window.location.pathname.split('/')[1] || '';
+    const baseHost = 'https://dridam.github.io' + (repo ? '/' + repo : '');
+
     const ubicaciones = [
-      {
-        coords: [40.4168, -3.7038], // Madrid
-        foto: "URL_DE_TU_FOTO_1",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_1"
-      },
-      {
-        coords: [40.3528, -3.5350], // Rivas-Vaciamadrid
-        foto: "URL_DE_TU_FOTO_2",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_2"
-      },
-      {
-        coords: [39.3892, -3.2081], // Alcázar de San Juan
-        foto: "URL_DE_TU_FOTO_3",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_3"
-      },
-      {
-        coords: [39.4831, -0.4431], // Quart de Poblet
-        foto: "URL_DE_TU_FOTO_4",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_4"
-      },
-      {
-        coords: [40.6008, -3.7081], // Tres Cantos
-        foto: "URL_DE_TU_FOTO_5",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_5"
-      },
-      {
-        coords: [39.5696, 2.6502], // Palma de Mallorca
-        foto: "URL_DE_TU_FOTO_6",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_6"
-      },
-      {
-        coords: [37.8882, -4.7794], // Córdoba
-        foto: "URL_DE_TU_FOTO_7",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_7"
-      },
-      {
-        coords: [41.6079, 2.2876], // Granollers
-        foto: "URL_DE_TU_FOTO_8",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_8"
-      },
-      {
-        coords: [40.6586, -3.7663], // Colmenar Viejo
-        foto: "URL_DE_TU_FOTO_9",
-        videoUrl: "URL_DE_EMBED_YOUTUBE_9"
-      },
+      { coords: [40.4168, -3.7038], foto: "URL_DE_TU_FOTO_1", videoUrl: "URL_DE_EMBED_YOUTUBE_1" },
+      { coords: [40.3528, -3.5350], foto: "URL_DE_TU_FOTO_2", videoUrl: "URL_DE_EMBED_YOUTUBE_2" },
+      { coords: [39.3892, -3.2081], foto: "URL_DE_TU_FOTO_3", videoUrl: "URL_DE_EMBED_YOUTUBE_3" },
+      { coords: [39.4831, -0.4431], foto: "URL_DE_TU_FOTO_4", videoUrl: "URL_DE_EMBED_YOUTUBE_4" },
+      { coords: [40.6008, -3.7081], foto: "URL_DE_TU_FOTO_5", videoUrl: "URL_DE_EMBED_YOUTUBE_5" },
+      { coords: [39.5696, 2.6502], foto: "URL_DE_TU_FOTO_6", videoUrl: "URL_DE_EMBED_YOUTUBE_6" },
+      { coords: [37.8882, -4.7794], foto: "URL_DE_TU_FOTO_7", videoUrl: "URL_DE_EMBED_YOUTUBE_7" },
+      { coords: [41.6079, 2.2876], foto: "URL_DE_TU_FOTO_8", videoUrl: "URL_DE_EMBED_YOUTUBE_8" },
+      { coords: [40.6586, -3.7663], foto: "URL_DE_TU_FOTO_9", videoUrl: "URL_DE_EMBED_YOUTUBE_9" },
       {
         coords: [38.7231, -5.5444], // Castuera
-        foto: "./pies_castuera.jpg", // Asegura la ruta desde el directorio raíz
+        foto: baseHost + "/pies_castuera.jpg", // Ruta exacta para Dridam
         videoUrl: null 
       }
     ];
 
-    // 5. Dibujar marcadores
     ubicaciones.forEach(punto => {
       let popupHtml = '';
 
       if (!punto.videoUrl) {
         popupHtml = `
           <div class="popup-content">
-            <img src="${punto.foto}" class="img-grande" alt="Imagen no encontrada">
+            <img src="${punto.foto}" class="img-grande" alt="Foto de Castuera">
           </div>
         `;
       } else {
         popupHtml = `
           <div class="popup-content">
-            <img src="${punto.foto}" alt="Imagen no encontrada">
+            <img src="${punto.foto}" alt="Imagen">
             <iframe src="${punto.videoUrl}" allowfullscreen></iframe>
           </div>
         `;
