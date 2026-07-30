@@ -17,7 +17,7 @@
     #map { width: 100vw; height: 100vh; touch-action: pan-x pan-y; }
     
     .leaflet-popup-content-wrapper { padding: 8px; border-radius: 8px; }
-    .leaflet-popup-content { width: auto !important; margin: 8px; max-width: 80vw !important; }
+    .leaflet-popup-content { width: auto !important; margin: 8px; max-width: 75vw !important; }
 
     .popup-content { 
       text-align: center;
@@ -26,12 +26,12 @@
       align-items: center;
     }
 
-    /* Imagen individual */
+    /* Imagen individual ajustada a un tamaño más contenido */
     .popup-content img.img-grande {
       width: 100%;
-      max-width: 280px;
-      max-height: 55vh;
-      min-height: 120px;
+      max-width: 240px;
+      max-height: 45vh;
+      min-height: 100px;
       height: auto;
       object-fit: contain;
       display: block;
@@ -42,7 +42,7 @@
     .carousel-wrapper {
       position: relative;
       width: 100%;
-      max-width: 280px;
+      max-width: 240px;
       overflow: hidden;
       border-radius: 6px;
     }
@@ -64,9 +64,9 @@
 
     .carousel-slide img {
       width: 100%;
-      max-width: 280px;
-      max-height: 55vh;
-      min-height: 120px;
+      max-width: 240px;
+      max-height: 45vh;
+      min-height: 100px;
       height: auto;
       object-fit: contain;
       display: block;
@@ -79,7 +79,7 @@
       background: rgba(0, 0, 0, 0.5);
       color: white;
       border: none;
-      font-size: 16px;
+      font-size: 14px;
       padding: 4px 8px;
       cursor: pointer;
       border-radius: 50%;
@@ -103,20 +103,20 @@
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Icono Estándar (Resto de ubicaciones)
+    // Icono Estándar (Tamaño medio ajustado)
     const defaultIcon = L.icon({
       iconUrl: 'logo.png',   
-      iconSize: [60, 40],    
-      iconAnchor: [30, 20],  
-      popupAnchor: [0, -20]  
+      iconSize: [52, 35],    
+      iconAnchor: [26, 17],  
+      popupAnchor: [0, -17]  
     });
 
     // Icono Pequeño (Madrid, Rivas, Colmenar Viejo y Tres Cantos)
     const smallIcon = L.icon({
       iconUrl: 'logo.png',   
-      iconSize: [45, 30],    
-      iconAnchor: [22, 15],  
-      popupAnchor: [0, -15]  
+      iconSize: [37, 25],    
+      iconAnchor: [18, 12],  
+      popupAnchor: [0, -12]  
     });
 
     const cacheBuster = '?v=' + new Date().getTime();
@@ -127,7 +127,7 @@
       { coords: [40.6586, -3.7663], fotos: ["pies_colmenar.jpg" + cacheBuster], esPequeño: true }, // Colmenar Viejo
       { coords: [40.6008, -3.7081], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },   // Tres Cantos
       { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar de San Juan
-      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false }, // Quart de Poblet (.jpeg)
+      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false }, // Quart de Poblet
       { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma de Mallorca
       { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpg" + cacheBuster], esPequeño: false }, // Córdoba
       { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpg" + cacheBuster], esPequeño: false }, // Granollers
@@ -137,7 +137,6 @@
     ubicaciones.forEach((punto, index) => {
       let popupHtml = '<div class="popup-content">';
 
-      // Si el punto tiene más de 1 foto, genera el carrusel
       if (punto.fotos && punto.fotos.length > 1) {
         const carouselId = `carousel-${index}`;
         popupHtml += `
@@ -149,7 +148,7 @@
         punto.fotos.forEach(foto => {
           popupHtml += `
             <div class="carousel-slide">
-              <img src="${foto}" alt="Foto" onload="actualizarPopup(this)">
+              <img src="${foto}" alt="Foto" loading="lazy" onload="actualizarPopup(this)">
             </div>
           `;
         });
@@ -160,9 +159,8 @@
           </div>
         `;
       } 
-      // Si solo tiene 1 foto
       else if (punto.fotos && punto.fotos.length === 1) {
-        popupHtml += `<img src="${punto.fotos[0]}" class="img-grande" alt="Foto" onload="actualizarPopup(this)">`;
+        popupHtml += `<img src="${punto.fotos[0]}" class="img-grande" alt="Foto" loading="lazy" onload="actualizarPopup(this)">`;
       }
 
       popupHtml += '</div>';
