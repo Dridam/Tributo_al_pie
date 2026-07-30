@@ -17,38 +17,52 @@
     #map { width: 100vw; height: 100vh; touch-action: pan-x pan-y; }
     
     .leaflet-popup-content-wrapper { padding: 8px; border-radius: 8px; }
-    .leaflet-popup-content { width: auto !important; margin: 8px; max-width: 75vw !important; }
+    .leaflet-popup-content { width: 250px !important; margin: 8px; }
 
     .popup-content { 
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      width: 100%;
     }
 
-    /* Imagen individual ajustada a tamaño ligero */
-    .popup-content img.img-grande {
+    /* Contenedor de imagen individual con tamaño reservado previo */
+    .img-container {
       width: 100%;
-      max-width: 240px;
-      max-height: 45vh;
-      min-height: 100px;
-      height: auto;
-      object-fit: contain;
-      display: block;
+      max-width: 250px;
+      height: 200px; /* Reserva el espacio para evitar descuadres en Leaflet */
+      background-color: #f0f0f0;
       border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     /* CARRUSEL PARA MÚLTIPLES FOTOS */
     .carousel-wrapper {
       position: relative;
       width: 100%;
-      max-width: 240px;
+      max-width: 250px;
+      height: 200px;
       overflow: hidden;
       border-radius: 6px;
+      background-color: #f0f0f0;
     }
 
     .carousel-track {
       display: flex;
+      width: 100%;
+      height: 100%;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
@@ -59,16 +73,14 @@
 
     .carousel-slide {
       flex: 0 0 100%;
+      height: 100%;
       scroll-snap-align: start;
     }
 
     .carousel-slide img {
       width: 100%;
-      max-width: 240px;
-      max-height: 45vh;
-      min-height: 100px;
-      height: auto;
-      object-fit: contain;
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
 
@@ -80,7 +92,7 @@
       color: white;
       border: none;
       font-size: 14px;
-      padding: 4px 8px;
+      padding: 6px 10px;
       cursor: pointer;
       border-radius: 50%;
       z-index: 10;
@@ -103,34 +115,32 @@
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Icono Tamaño Original (Resto de ubicaciones)
+    // Icono Grande (75x50)
     const defaultIcon = L.icon({
+      iconUrl: 'logo.png',   
+      iconSize: [75, 50],    
+      iconAnchor: [37, 25],  
+      popupAnchor: [0, -25]  
+    });
+
+    // Icono Mediano (60x40)
+    const smallIcon = L.icon({
       iconUrl: 'logo.png',   
       iconSize: [60, 40],    
       iconAnchor: [30, 20],  
       popupAnchor: [0, -20]  
     });
 
-    // Icono Ajustado para zonas cercanas (Madrid, Belinchón, San Rafael, Tres Cantos)
-    const smallIcon = L.icon({
-      iconUrl: 'logo.png',   
-      iconSize: [48, 32],    
-      iconAnchor: [24, 16],  
-      popupAnchor: [0, -16]  
-    });
-
     const cacheBuster = '?v=' + new Date().getTime();
 
+    // Lista de ubicaciones activas con pies_cordoba.jpg agregada
     const ubicaciones = [
-      { coords: [40.4168, -3.7038], fotos: ["pies_madrid.jpg" + cacheBuster], esPequeño: true },   // Madrid
-      { coords: [40.0471, -3.0504], fotos: ["pies_belinchon.jpg" + cacheBuster], esPequeño: true }, // Belinchón
-      { coords: [40.7126, -4.1738], fotos: ["pies_colmenar.jpg" + cacheBuster], esPequeño: true },// San Rafael (mantenemos nombre de foto)
+      { coords: [40.7126, -4.1738], fotos: ["pies_colmenar.jpg" + cacheBuster], esPequeño: true }, // San Rafael
       { coords: [40.6008, -3.7081], fotos: ["pies_tres.jpg" + cacheBuster], esPequeño: true },     // Tres Cantos
-      { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar de San Juan
-      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false },  // Quart de Poblet
-      { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma de Mallorca
+      { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar
+      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false },  // Quart
+      { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma
       { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpg" + cacheBuster], esPequeño: false }, // Córdoba
-      { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpg" + cacheBuster], esPequeño: false }, // Granollers
       { coords: [38.7231, -5.5444], fotos: ["pies_castuera.jpg" + cacheBuster], esPequeño: false }  // Castuera
     ];
 
@@ -148,7 +158,7 @@
         punto.fotos.forEach(foto => {
           popupHtml += `
             <div class="carousel-slide">
-              <img src="${foto}" alt="Foto" loading="lazy" onload="actualizarPopup(this)">
+              <img src="${foto}" alt="Foto" onload="actualizarPopup(this)">
             </div>
           `;
         });
@@ -160,7 +170,11 @@
         `;
       } 
       else if (punto.fotos && punto.fotos.length === 1) {
-        popupHtml += `<img src="${punto.fotos[0]}" class="img-grande" alt="Foto" loading="lazy" onload="actualizarPopup(this)">`;
+        popupHtml += `
+          <div class="img-container">
+            <img src="${punto.fotos[0]}" alt="Foto" onload="actualizarPopup(this)">
+          </div>
+        `;
       }
 
       popupHtml += '</div>';
