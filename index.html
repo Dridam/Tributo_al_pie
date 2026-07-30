@@ -10,25 +10,50 @@
     body { margin: 0; padding: 0; font-family: sans-serif; }
     #map { width: 100vw; height: 100vh; }
     
-    /* Ampliar el contenedor general del recuadro flotante (popup) */
+    /* Ajuste del contenedor principal del popup */
     .leaflet-popup-content-wrapper {
       padding: 10px;
     }
     .leaflet-popup-content {
-      width: auto !important; /* Permite que el popup se adapte al contenido */
-      margin: 12px;
+      width: auto !important;
+      margin: 10px;
+      min-width: 200px; /* Asegura un ancho mínimo para evitar colapsos */
     }
 
-    /* Estilos estándar para marcadores con foto y vídeo */
-    .popup-content { text-align: center; }
-    .popup-content img { width: 100%; max-width: 320px; border-radius: 6px; display: block; margin-bottom: 8px; }
-    .popup-content iframe { width: 100%; max-width: 320px; height: 180px; border: 0; display: block; }
+    /* Estilos base para el contenido flotante */
+    .popup-content { 
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-    /* Estilo original más amplio para fotos sin vídeo (Castuera y Alcázar) */
+    /* Imágenes con vídeo */
+    .popup-content img { 
+      width: 100%; 
+      max-width: 320px; 
+      height: auto;
+      border-radius: 6px; 
+      display: block; 
+      margin-bottom: 8px; 
+    }
+
+    .popup-content iframe { 
+      width: 100%; 
+      max-width: 320px; 
+      height: 180px; 
+      border: 0; 
+      display: block; 
+    }
+
+    /* Estilo para marcadores SOLO FOTO (Castuera y Alcázar de San Juan) */
     .popup-content img.img-grande {
-      max-width: 500px; /* Restaurado a los 500px de la primera versión */
+      width: 100%;
+      max-width: 500px; /* Tamaño amplio de la primera versión */
+      min-height: 150px; /* Evita que el contenedor colapse a 0px antes de renderizar */
       height: auto;
       margin-bottom: 0;
+      object-fit: contain;
     }
   </style>
 </head>
@@ -53,7 +78,6 @@
       popupAnchor: [0, -30]  
     });
 
-    // Timestamp para forzar al navegador a ignorar la caché de las imágenes
     const cacheBuster = '?v=' + new Date().getTime();
 
     const ubicaciones = [
@@ -83,13 +107,13 @@
       if (!punto.videoUrl) {
         popupHtml = `
           <div class="popup-content">
-            <img src="${punto.foto}" class="img-grande" alt="Imagen no encontrada">
+            <img src="${punto.foto}" class="img-grande" alt="Cargando imagen..." onload="actualizarPopup(this)">
           </div>
         `;
       } else {
         popupHtml = `
           <div class="popup-content">
-            <img src="${punto.foto}" alt="Imagen">
+            <img src="${punto.foto}" alt="Imagen" onload="actualizarPopup(this)">
             <iframe src="${punto.videoUrl}" allowfullscreen></iframe>
           </div>
         `;
@@ -97,6 +121,19 @@
 
       L.marker(punto.coords, { icon: customIcon }).addTo(map).bindPopup(popupHtml);
     });
+
+    // Función global para forzar al popup a recalcular sus dimensiones en cuanto la imagen termina de cargarse
+    function actualizarPopup(imgElement) {
+      const popup = imgElement.closest('.leaflet-popup');
+      if (popup && map) {
+        // Redibuja el popup para adaptar el tamaño exacto de la imagen cargada
+        map.eachLayer(layer => {
+          if (layer.getPopup && layer.getPopup() && layer.isPopupOpen()) {
+            layer.getPopup().update();
+          }
+        });
+      }
+    }
   </script>
 </body>
 </html>
