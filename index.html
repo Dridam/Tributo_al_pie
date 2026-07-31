@@ -72,6 +72,11 @@
       object-position: center 12.5%;
     }
 
+    /* Muestra 1/6 (16.67%) más de la parte superior recortando por abajo */
+    .img-container img.img-quart-adjust {
+      object-position: center 83.33%;
+    }
+
     /* CARRUSEL PARA MÚLTIPLES FOTOS */
     .carousel-wrapper {
       position: relative;
@@ -164,7 +169,7 @@
       { coords: [40.0471, -3.0504], fotos: ["pies_belinchon.jpeg" + cacheBuster], esPequeño: true }, // Belinchón (.jpeg)
       { coords: [40.4168, -3.7038], fotos: ["pies_madrid.jpeg" + cacheBuster], esPequeño: false }, // Madrid (.jpeg)
       { coords: [39.3892, -3.2081], fotos: ["pies_alcazar.jpg" + cacheBuster], esPequeño: false }, // Alcázar
-      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-bottom" }, // Quart (.jpeg)
+      { coords: [39.4831, -0.4431], fotos: ["pies_quart.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-quart-adjust" }, // Quart (.jpeg + recuadre +1/6 arriba)
       { coords: [39.5696, 2.6502],  fotos: ["pies_palma.jpg" + cacheBuster], esPequeño: false },   // Palma
       { coords: [37.8882, -4.7794], fotos: ["pies_cordoba.jpeg" + cacheBuster], esPequeño: false, esNatural: true }, // Córdoba (.jpeg / Tamaño real)
       { coords: [41.6079, 2.2876],  fotos: ["pies_granollers.jpeg" + cacheBuster], esPequeño: false, fitClass: "img-crop-top-eighth" }, // Granollers (.jpeg)
